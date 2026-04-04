@@ -2,8 +2,8 @@ import React from 'react';
 import { Activity, ShieldCheck, Zap, Database, Combine, BrainCircuit, ArrowDown } from 'lucide-react';
 
 const NodeCard = ({ icon: Icon, title, desc, delay }) => (
-  <div className={`relative flex flex-col items-center bg-white border border-slate-200 rounded-2xl p-6 shadow-sm shadow-blue-100 w-full max-w-sm transition-all hover:border-blue-300 hover:shadow-md hover:-translate-y-1 z-10 animate-fade-in-up`} style={{animationDelay: delay}}>
-    <div className="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 border border-blue-100">
+  <div className={`relative flex flex-col items-center bg-white border border-slate-200 rounded-2xl p-6 shadow-sm shadow-teal-100 w-full max-w-sm transition-all hover:border-teal-300 hover:shadow-md hover:-translate-y-1 z-10 animate-fade-in-up`} style={{animationDelay: delay}}>
+    <div className="h-12 w-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-4 border border-teal-100">
       <Icon size={24} />
     </div>
     <h4 className="text-lg font-bold text-slate-900 text-center mb-2">{title}</h4>
@@ -21,7 +21,7 @@ const Connector = () => (
 export const PipelineVisualizer = () => {
   return (
     <div className="w-full max-w-4xl mx-auto py-12 px-4 flex flex-col items-center relative">
-      <div className="absolute inset-0 bg-slate-50 rounded-[3rem] -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white rounded-[3rem] -z-10 border border-slate-100 shadow-xl shadow-teal-50/50" />
       
       <div className="w-full flex justify-between items-end px-8 mb-8">
          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">TypeScript Orchestrator</span>
