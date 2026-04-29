@@ -11,7 +11,7 @@
 
 ## 🔬 Overview & Mathematical Foundation
 
-**Vikshep** is a high-performance, domain-agnostic mathematical engine for computing the **Wavelet Scattering Transform (WST)** of non-stationary 1-D time-series data. It is engineered to extract robust structural features from environments with extreme noise floors (e.g., high-frequency trading tick data, gravitational wave interferometry, and high-density EEG arrays).
+**Vikshep** is a high-performance, domain-agnostic mathematical engine for computing the **Wavelet Scattering Transform (WST)** of non-stationary 1-D time-series data. It is engineered to extract structural features from environments with extreme noise floors (e.g., high-frequency trading tick data, gravitational wave interferometry, and high-density EEG arrays).
 
 Traditional Fourier analysis fails on non-stationary transients due to a fundamental lack of temporal localization. Vikshep solves this by implementing a deep, non-linear cascaded filter bank. 
 
