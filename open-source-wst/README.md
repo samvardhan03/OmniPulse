@@ -114,7 +114,7 @@ reducer = PCAReducer(variance_threshold=0.95)
 
 ---
 
-## 🤖 Model Context Protocol (MCP)
+## Model Context Protocol (MCP)
 
 Vikshep functions as an autonomous tool for Agentic AI workflows via the Model Context Protocol.
 
@@ -135,8 +135,8 @@ Vikshep operates under a dual-licensing framework to support both open scientifi
    - Ideal for independent researchers, academic labs, and open-source applications.
    - *License:* See [`LICENSE`](LICENSE) for Apache 2.0 details.
 
-2. **OmniPulse Enterprise / Commercial License**
-   - **OmniPulse** is our proprietary enterprise SaaS tier that utilizes Vikshep as its mathematical backend.
+2. **Vikshep Enterprise / Commercial License**
+   - **Vikshep** is our proprietary enterprise SaaS tier that utilizes Vikshep as its mathematical backend.
    - OmniPulse deployments include high-throughput Rust-based orchestration clusters, Zero-Copy Arrow Plasma memory fabrics, cryptographic IPFS licensing, HNSW vector database integrations, and proprietary data ingestion pipelines (e.g., FIX protocols for HFT).
    - *Contact:* For laboratory exascale deployments, clinical pipelines, or enterprise commercial integration, please contact [shekhawatsamvardhan@gmail.com](mailto:shekhawatsamvardhan@gmail.com).
 
