@@ -12,9 +12,9 @@ const NAV_COLS = [
   {
     title: "Resources",
     links: [
-      { label: "Docs ↗", href: "https://github.com/samvardhan03/omnipulse-agent#readme" },
+      { label: "Docs ↗", href: "https://github.com/samvardhan03/Omnipulse/#readme" },
       { label: "Changelog", href: "#" },
-      { label: "GitHub ↗", href: "https://github.com/samvardhan03/omnipulse" },
+      { label: "GitHub ↗", href: "https://github.com/samvardhan03/Omnipulse" },
     ],
   },
   {
@@ -102,7 +102,7 @@ export default function SiteFooter() {
               { label: "PyPI: omnipulse-agent", href: "https://pypi.org/project/omnipulse-agent/" },
               { label: "PyPI: omni-wst-core", href: "https://pypi.org/project/omni-wst-core/" },
               { label: "crates.io: vector-index", href: "https://crates.io/crates/vector-index" },
-              { label: "GitHub: omnipulse-rs", href: "https://github.com/samvardhan03/omnipulse-rs" },
+              { label: "GitHub: omnipulse", href: "https://github.com/samvardhan03/Omnipulse" },
             ].map((l) => (
               <a
                 key={l.href}
@@ -115,7 +115,7 @@ export default function SiteFooter() {
             ))}
           </div>
           <span className="font-mono text-[11px]" style={{ color: "var(--ink-mute)" }}>
-            © 2025 OmniPulse
+            © 2026 OmniPulse
           </span>
         </div>
       </div>
