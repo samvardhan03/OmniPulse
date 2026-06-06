@@ -1,0 +1,18 @@
+[build-system]
+requires = ["scikit-build-core>=0.9","pybind11>=2.12","cmake>=3.18","ninja"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "vikshep"
+version = "0.3.0"
+description = "Vikshep — runtime-configurable n-D / SE(2) / SO(3) wavelet scattering (Data-Plane SDK)."
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.scikit-build]
+cmake.build-type = "Release"
+wheel.packages = ["src/vikshep"]
