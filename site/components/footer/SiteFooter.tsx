@@ -27,7 +27,7 @@ const NAV_COLS = [
   {
     title: "Legal",
     links: [
-      { label: "License (Apache 2.0)", href: "https://www.apache.org/licenses/LICENSE-2.0" },
+      { label: "License: AGPL-3.0 + Commercial", href: "https://github.com/samvardhan03/Omnipulse/blob/main/LICENSING.md" },
       { label: "Licensing", href: "/licensing" },
     ],
   },
@@ -47,7 +47,7 @@ export default function SiteFooter() {
               Wavelet-scattering compliance infrastructure
             </span>
             <span className="font-mono text-[11px] mt-2" style={{ color: "var(--ink-mute)" }}>
-              Apache-2.0 ·{" "}
+              AGPL-3.0 + Commercial ·{" "}
               <a
                 href="mailto:shekhawatsamvardhan@gmail.com"
                 className="transition-opacity hover:opacity-60"

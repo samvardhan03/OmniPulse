@@ -6,7 +6,7 @@ import SiteFooter from "@/components/footer/SiteFooter";
 export const metadata = {
   title: "Licensing — OmniPulse",
   description:
-    "Apache 2.0 vs. Commercial Enterprise — the OmniPulse dual-licensing matrix.",
+    "AGPL-3.0 + Commercial — the OmniPulse dual-licensing model.",
 };
 
 export default function LicensingPage() {

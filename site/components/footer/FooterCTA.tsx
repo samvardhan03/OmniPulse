@@ -13,7 +13,7 @@ export default function FooterCTA() {
             Ready to integrate the fingerprint plane?
           </h2>
           <p className="text-[17px] leading-[1.6]" style={{ color: "var(--ink-mute)" }}>
-            Start with the open-source modules. The core is Apache 2.0 —
+            Start with the open-source modules. The core is AGPL-3.0 + Commercial —
             enterprise production is a conversation.
           </p>
           <div className="flex flex-wrap gap-4">

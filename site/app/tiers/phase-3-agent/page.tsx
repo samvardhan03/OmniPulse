@@ -27,7 +27,7 @@ export default function Phase3Page() {
           "Most 'AI compliance' products bolt an LLM on top of an opaque pipeline. OmniPulse inverts it.",
           "The LLM is a router, not a decision-maker. The deterministic GPU pipeline produces the legally-significant fingerprint.",
         ]}
-        pricingNote="Apache 2.0 — free"
+        pricingNote="AGPL-3.0 — free for research & open source"
         enterpriseUseCases={[
           {
             title: "In-house compliance copilot",

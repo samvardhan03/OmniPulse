@@ -7,7 +7,7 @@ export const TIERS = [
   {
     phase: "I",
     title: "Phase I — Institutional Research",
-    sub: "Standalone DSP wheels for desktop labs and HPC clusters. C++/CUDA Wavelet Scattering primitives, no orchestration required. Apache 2.0.",
+    sub: "Standalone DSP wheels for desktop labs and HPC clusters. C++/CUDA Wavelet Scattering primitives, no orchestration required. AGPL-3.0 + Commercial.",
     pkg: "pip install omni-wst-core",
     externalHref: "https://pypi.org/project/omni-wst-core/",
     externalLabel: "↗ View on PyPI",
@@ -17,7 +17,7 @@ export const TIERS = [
   {
     phase: "II",
     title: "Phase II — High-Velocity Concurrent Processing",
-    sub: "The vector substrate. omni-hnsw + sliced-wasserstein Rust crates for sub-millisecond nearest-neighbour over billion-scale fingerprint catalogues. Apache 2.0.",
+    sub: "The vector substrate. omni-hnsw + sliced-wasserstein Rust crates for sub-millisecond nearest-neighbour over billion-scale fingerprint catalogues. AGPL-3.0 + Commercial.",
     pkg: "cargo add vector-index sliced-wasserstein",
     externalHref: "https://crates.io/crates/vector-index",
     externalLabel: "↗ View on crates.io",
@@ -27,7 +27,7 @@ export const TIERS = [
   {
     phase: "III",
     title: "Phase III — Autonomous Agentic Control",
-    sub: "Drop-in MCP server. omnipulse-agent parses operator requests and routes them to the Rust orchestrator over line-delimited JSON-RPC 2.0. Apache 2.0.",
+    sub: "Drop-in MCP server. omnipulse-agent parses operator requests and routes them to the Rust orchestrator over line-delimited JSON-RPC 2.0. AGPL-3.0 + Commercial.",
     pkg: "pip install omnipulse-agent",
     externalHref: "https://pypi.org/project/omnipulse-agent/",
     externalLabel: "↗ View on PyPI",

@@ -11,7 +11,7 @@
 [![crates.io — omni-ffi](https://img.shields.io/crates/v/omni-ffi.svg?label=crates%20omni-ffi&color=62E6FF)](https://crates.io/crates/omni-ffi)
 [![crates.io — vector-index](https://img.shields.io/crates/v/vector-index.svg?label=crates%20vector-index&color=62E6FF)](https://crates.io/crates/vector-index)
 [![crates.io — sliced-wasserstein](https://img.shields.io/crates/v/sliced-wasserstein.svg?label=crates%20sliced-wasserstein&color=62E6FF)](https://crates.io/crates/sliced-wasserstein)
-[![License — Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-1B1B1F.svg)](./LICENSE)
+[![License — AGPL-3.0 + Commercial](https://img.shields.io/badge/license-AGPL--3.0%2BCommercial-1B1B1F.svg)](./LICENSING.md)
 [![Built with — Rust + C++/CUDA + Python](https://img.shields.io/badge/built%20with-Rust%20%2B%20C%2B%2B%2FCUDA%20%2B%20Python-1B1B1F.svg)]()
 
 </div>
@@ -163,12 +163,27 @@ if you intend to build or contribute.
 
 ---
 
+## Sister products
+
+The OmniPulse scattering engine — omni-wst-core, omni-ffi, sliced-wasserstein, vector-index — also
+powers two independent product surfaces built by the same team.
+
+| Product | Domain | One-liner |
+|---|---|---|
+| [**ψ Vikshep**](https://vikshep.vercel.app) | Scientific compute | Wavelet scattering features for physics analyses — mass-decorrelated jet tagging, template-free BSM anomaly detection, rotation-invariant field inference. In pilot with the University of Edinburgh on Geant4-simulated ATLAS diboson data. |
+| [**📡 Drift**](https://drift-site-livid.vercel.app) | Systematic alpha | Quantitative research platform — Cauchy wavelet features over log-returns, rank-transform IC/ICIR signal composition, Black-Litterman and HRP portfolio construction. 182 tests, Sharpe 0.70 on the 3-year synthetic HRP backtest. |
+
+Same zero-copy core, same mathematical guarantees, completely different markets.
+
+---
+
 ## License
 
-Apache 2.0 for all open source modules. A commercial license tier
-exists for production deployments at scale — see
-[omnipulse.dev/licensing](https://omnipulse.dev/licensing) or email
-shekhawatsamvardhan@gmail.com.
+Dual-licensed: **GNU AGPL-3.0** for open-source and research use (see [LICENSE](LICENSE)),
+plus a **Commercial License** for proprietary or production deployments that cannot comply
+with the AGPL-3.0 source-disclosure requirement (see [LICENSING.md](LICENSING.md)).
+
+Contact shekhawatsamvardhan@gmail.com for commercial terms.
 
 ---
 

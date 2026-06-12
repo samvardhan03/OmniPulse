@@ -16,7 +16,7 @@ export default function Phase2Page() {
         phase="II"
         tierName="High-Velocity Concurrent Processing Tier"
         headline="Billion-scale nearest neighbour over distributions, in Rust."
-        sub="Concurrent HNSW with a pluggable distance metric — and the first production-ready Sliced-Wasserstein implementation that composes cleanly with HNSW. Apache 2.0."
+        sub="Concurrent HNSW with a pluggable distance metric — and the first production-ready Sliced-Wasserstein implementation that composes cleanly with HNSW. AGPL-3.0 + Commercial."
         diagram={<HnswGraphExplorer />}
         whatYouGet={[
           "vector-index — generic ConcurrentHnsw<P, M> over a parking_lot::RwLock-backed index.",
@@ -27,7 +27,7 @@ export default function Phase2Page() {
           "Cosine and L2 collapse semantically rich fingerprints; SW₁ preserves distributional structure.",
           "HNSW gives you sub-millisecond k-NN. Compose the two for a billion-scale, distributionally-aware index.",
         ]}
-        pricingNote="Apache 2.0 — free"
+        pricingNote="AGPL-3.0 — free for research & open source"
         enterpriseUseCases={[
           {
             title: "Catalogue dedup / matching",

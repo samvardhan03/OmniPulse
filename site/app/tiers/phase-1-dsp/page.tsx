@@ -16,7 +16,7 @@ export default function Phase1Page() {
         phase="I"
         tierName="Institutional Research Tier"
         headline="Wavelet scattering, shipped as a wheel."
-        sub="Drop-in C++/CUDA primitives for any audio, vibration, or biosignal pipeline that needs translation-invariant, frequency-aware fingerprints. Apache 2.0."
+        sub="Drop-in C++/CUDA primitives for any audio, vibration, or biosignal pipeline that needs translation-invariant, frequency-aware fingerprints. AGPL-3.0 + Commercial."
         diagram={<FilterBankExplorer />}
         whatYouGet={[
           "omni-wst-core PyPI wheel — WSTEngine<HopperTag, J, Q> + analytic Morlet bank + Radix-2 FFT CPU fallback.",
@@ -27,7 +27,7 @@ export default function Phase1Page() {
           "Spectrogram-and-CNN pipelines burn enormous compute to learn what scattering provides analytically.",
           "WST gives you orderable, comparable fingerprints with formal stability guarantees, in milliseconds.",
         ]}
-        pricingNote="Apache 2.0 — free"
+        pricingNote="AGPL-3.0 — free for research & open source"
         enterpriseUseCases={[
           {
             title: "Audio QA / royalty enforcement",

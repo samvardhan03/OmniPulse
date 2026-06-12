@@ -25,7 +25,7 @@ export default function DualLicensingProtocolSection() {
             className="font-serif font-light"
             style={{ fontSize: "clamp(28px,3.6vw,52px)", color: "var(--ink)" }}
           >
-            Apache 2.0 vs Commercial Enterprise
+            AGPL-3.0 + Commercial vs Enterprise
           </h2>
         </div>
 
@@ -37,7 +37,7 @@ export default function DualLicensingProtocolSection() {
                   Capability
                 </th>
                 <th className="text-left py-3 px-4 font-mono text-[12px] uppercase tracking-[0.14em]" style={{ color: "var(--ink)" }}>
-                  Apache 2.0
+                  AGPL-3.0 + Commercial
                 </th>
                 <th className="text-left py-3 pl-8 font-mono text-[12px] uppercase tracking-[0.14em]" style={{ color: "var(--accent)" }}>
                   Commercial Enterprise
@@ -78,9 +78,9 @@ export default function DualLicensingProtocolSection() {
         <div className="mt-10 flex flex-col gap-2 max-w-[640px]">
           <p className="text-[15px] leading-[1.6]" style={{ color: "var(--ink-mute)" }}>
             Every Rust crate and Python module in this workspace is published
-            under the <code className="font-mono text-[13px]">Apache-2.0</code>{" "}
+            under the <code className="font-mono text-[13px]">AGPL-3.0-or-later</code>{" "}
             SPDX identifier (see{" "}
-            <code className="font-mono text-[12px]">omnipulse-rs/Cargo.toml:16</code>). Commercial
+            <a href="https://github.com/samvardhan03/Omnipulse/blob/main/LICENSING.md" className="transition-opacity hover:opacity-60" style={{ color: "var(--ink)" }}>LICENSING.md</a>). Commercial
             enterprise agreements unlock production SLAs, managed infrastructure,
             and indemnification.
           </p>
