@@ -4,7 +4,7 @@ import TierPageShell from "@/components/tiers/TierPageShell";
 import HnswGraphExplorer from "@/components/tiers/phase-2/HnswGraphExplorer";
 
 export const metadata = {
-  title: "Phase II — Vector Substrate · OmniPulse",
+  title: "Phase II: Vector Substrate · OmniPulse",
   description: "Billion-scale nearest neighbour over distributions, in Rust. Concurrent HNSW + Sliced-Wasserstein.",
 };
 
@@ -16,18 +16,18 @@ export default function Phase2Page() {
         phase="II"
         tierName="High-Velocity Concurrent Processing Tier"
         headline="Billion-scale nearest neighbour over distributions, in Rust."
-        sub="Concurrent HNSW with a pluggable distance metric — and the first production-ready Sliced-Wasserstein implementation that composes cleanly with HNSW. AGPL-3.0 + Commercial."
+        sub="Concurrent HNSW with a pluggable distance metric: and the first production-ready Sliced-Wasserstein implementation that composes cleanly with HNSW. AGPL-3.0 + Commercial."
         diagram={<HnswGraphExplorer />}
         whatYouGet={[
-          "vector-index — generic ConcurrentHnsw<P, M> over a parking_lot::RwLock-backed index.",
-          "sliced-wasserstein — SW₁ over point-cloud fingerprints; implements Metric from vector-index behind a feature flag.",
+          "vector-index: generic ConcurrentHnsw<P, M> over a parking_lot::RwLock-backed index.",
+          "sliced-wasserstein: SW₁ over point-cloud fingerprints; implements Metric from vector-index behind a feature flag.",
           "Stable insert/search under high-throughput concurrent ingest.",
         ]}
         whatItSolves={[
           "Cosine and L2 collapse semantically rich fingerprints; SW₁ preserves distributional structure.",
           "HNSW gives you sub-millisecond k-NN. Compose the two for a billion-scale, distributionally-aware index.",
         ]}
-        pricingNote="AGPL-3.0 — free for research & open source"
+        pricingNote="AGPL-3.0: free for research & open source"
         enterpriseUseCases={[
           {
             title: "Catalogue dedup / matching",

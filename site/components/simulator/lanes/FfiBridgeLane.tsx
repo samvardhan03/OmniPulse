@@ -6,7 +6,6 @@ export default function FfiBridgeLane({ active }: { active: boolean }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
-        <span className="text-[16px]">🌉</span>
         <span className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "var(--ink-mute)" }}>
           cxx FFI bridge
         </span>

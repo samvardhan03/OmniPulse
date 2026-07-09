@@ -133,7 +133,7 @@ python -m omnipulse_agent.run --wav your.wav`;
           </h2>
           <p style={{ color: "var(--ink-mute)", fontSize: 16, maxWidth: 560 }}>
             Drop a WAV file. Step through each swimlane. Every value is
-            deterministically computed from your input — no server calls.
+            deterministically computed from your input, no server calls.
           </p>
         </div>
 

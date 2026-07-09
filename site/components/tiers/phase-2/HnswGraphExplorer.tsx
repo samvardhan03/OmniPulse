@@ -219,7 +219,7 @@ export default function HnswGraphExplorer() {
                 className="mt-2 text-[11px] uppercase tracking-[0.1em]"
                 style={{ color: "var(--ink-mute)" }}
               >
-                ✕ close
+                close
               </button>
             </div>
           ) : (
