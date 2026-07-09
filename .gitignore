@@ -26,3 +26,16 @@ Thumbs.db
 **/.env
 **/.env.local
 **/secrets.*
+
+# Private artifacts -- must never be committed to the public repo.
+# These live in github.com/samvardhan03/omni (private engine repo).
+Ethics-and-AI/
+**/*.safetensors
+**/*.pt
+**/*.ckpt
+**/*.pth
+**/*.pem
+**/*.key
+ldpc/ldpc_h_tables.h
+ldpc/ldpc_h_tables.npy
+ldpc/ldpc_digest.txt
