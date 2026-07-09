@@ -1,194 +1,190 @@
-<div align="center">
+# OmniPulse
 
-# Ω OmniPulse
-
-### Compliance & IP Infrastructure for the Generative Media Era
-
-**Wavelet-scattering fingerprints. Zero-copy FFI. Memory-safe orchestration. MCP-native.**
-
-[![PyPI — omnipulse-agent](https://img.shields.io/pypi/v/omnipulse-agent.svg?label=pypi%20omnipulse-agent&color=5BFFA0)](https://pypi.org/project/omnipulse-agent/)
-[![PyPI — omni-wst-core](https://img.shields.io/pypi/v/omni-wst-core.svg?label=pypi%20omni-wst-core&color=5BFFA0)](https://pypi.org/project/omni-wst-core/)
-[![crates.io — omni-ffi](https://img.shields.io/crates/v/omni-ffi.svg?label=crates%20omni-ffi&color=62E6FF)](https://crates.io/crates/omni-ffi)
-[![crates.io — vector-index](https://img.shields.io/crates/v/vector-index.svg?label=crates%20vector-index&color=62E6FF)](https://crates.io/crates/vector-index)
-[![crates.io — sliced-wasserstein](https://img.shields.io/crates/v/sliced-wasserstein.svg?label=crates%20sliced-wasserstein&color=62E6FF)](https://crates.io/crates/sliced-wasserstein)
-[![License — AGPL-3.0 + Commercial](https://img.shields.io/badge/license-AGPL--3.0%2BCommercial-1B1B1F.svg)](./LICENSING.md)
-[![Built with — Rust + C++/CUDA + Python](https://img.shields.io/badge/built%20with-Rust%20%2B%20C%2B%2B%2FCUDA%20%2B%20Python-1B1B1F.svg)]()
-
-</div>
+OmniPulse is a media provenance platform for creators and rights organizations.
+It pairs two complementary verification modes on a shared substrate: OmniLock
+embeds a cryptographically signed 64-bit identifier into a video or image at
+creation (active, write-path), and OmniPulse computes a deterministic
+wavelet-scattering fingerprint that matches any derivative without cooperation
+at creation (passive, read-path). Both layers write to the same signed ledger
+and run on the same CUDA/Rust/Python substrate. The verify path is fixed-operator
+mathematics -- a linear parity check and an HNSW nearest-neighbor query -- so
+the verdict does not depend on a black-box service or on this team being
+available.
 
 ---
 
-## This repository is the complete OmniPulse monorepo.
-
-All four modules live here and ship to PyPI and crates.io independently.
-This root lets you **read the architecture in one place** and jump to
-whichever sub-package you need. See [`https://github.com/samvardhan03/Omnipulse`](https://github.com/samvardhan03/Omnipulse).
-
----
-
-## Engineering outcomes (the headline numbers)
-
-| Property | Outcome | Where it comes from |
-|---|---|---|
-| **End-to-end fingerprint latency** | < 40 ms for a 1-second 44.1 kHz audio clip on a single Hopper-class GPU | C++/CUDA `WSTEngine<HopperTag, J, Q>` on pre-pinned UVA pages |
-| **Host ↔ device transfer throughput** | **15+ GB/s sustained DMA** on PCIe 4.0 x16 via Apache Arrow Plasma pages registered with `cudaHostRegister` | `cpp/wst_bridge.cu` — pinned, portable, no `cudaMemcpy` round-trip |
-| **Python ↔ Rust handover cost** | **Zero-copy** — the f32 audio buffer is written once to POSIX shared memory and never re-serialized | `omnipulse-agent` → `omnipulse-rs` over a 28-char SHA3-256 hex shm name |
-| **FFI boundary cost** | **Zero-marshalling** — `cxx` passes raw `u64` pointers across the C++↔Rust seam | `omni-ffi` — `unsafe extern "C++" fn run_wst_pipeline(input_plasma_ptr: u64, ...)` |
-| **Memory safety** | RAII-guarded `WSTResult` ownership; `shm_unlink` is single-owner and idempotent | `OmniFfiKernel::WstResultGuard` in `omnipulse-rs`; `shm::read_and_unlink` |
-| **Concurrency** | Lock-shared HNSW reads + bounded-time writes under `parking_lot::RwLock`; blocking kernel runs on `tokio::task::spawn_blocking` so stdio stays live | `ConcurrentHnsw<PointCloud, SlicedWasserstein>` |
-| **Transport overhead** | Line-delimited JSON-RPC 2.0 over stdio — **no HTTP, no TLS, no socket setup** | rmcp `transport::stdio()` |
-| **OS portability of segment names** | 28-char shm names fit the macOS `PSHMNAMLEN = 31` ceiling and every Linux kernel ever shipped | `hashlib.sha3_256(buf).digest()[:14].hex()` |
-
-These are the operating points the architecture optimizes for. The
-underlying math (analytic Morlet wavelet scattering, sliced
-1-Wasserstein on empirical fingerprint distributions, HNSW indexing) is
-explained in depth inside the per-module READMEs — this root keeps
-the lens on *engineering outcomes*.
-
----
-
-## Architecture at a glance
+## Architecture
 
 ```
-                         ┌──────────────────────────────────────────────┐
-                         │   omnipulse-agent  (PyPI · Python 3.11+)    │
-                         │   ──────────────────────────────────────    │
-                         │   • Anthropic-driven cognitive router        │
-                         │   • SharedMemoryManager (POSIX shm)          │
-                         │   • MCPClient — line-delimited JSON-RPC 2.0  │
-                         └────────────────────┬─────────────────────────┘
-                                              │
-                       28-char hex shm name   │   stdio pipes
-                       (SHA3-256 digest[:14]) │   (one \n-terminated frame per call)
-                                              ▼
-                         ┌──────────────────────────────────────────────┐
-                         │   omnipulse-rs  (crates.io · Rust workspace) │
-                         │   ──────────────────────────────────────    │
-                         │   • omnipulse-mcp binary  (rmcp stdio)       │
-                         │   • vector-index  (concurrent HNSW)          │
-                         │   • sliced-wasserstein  (SW₁ metric)         │
-                         │   • shm_open + mmap + spawn_blocking         │
-                         └────────────────────┬─────────────────────────┘
-                                              │
-                       u64 pinned-host ptr    │   cxx::bridge (zero-marshalling)
-                       (UVA-registered page)  │
-                                              ▼
-                         ┌──────────────────────────────────────────────┐
-                         │   omni-ffi  (crates.io · zero-copy bridge)   │
-                         │   ──────────────────────────────────────    │
-                         │   • cxx 1.0 — unsafe extern "C++"             │
-                         │   • CPU path: cpp/wst_bridge_cpu.cpp          │
-                         │   • CUDA path: cpp/wst_bridge_cuda.cpp        │
-                         │     (links cudart + cufft)                    │
-                         └────────────────────┬─────────────────────────┘
-                                              │
-                       raw float* / CUdeviceptr│
-                                              ▼
-                         ┌──────────────────────────────────────────────┐
-                         │   omni-wst-core  (PyPI · C++/CUDA wheels)    │
-                         │   ──────────────────────────────────────    │
-                         │   • WSTEngine<HopperTag, J, Q>   (CUDA)       │
-                         │   • build_cpu_morlet_bank + Radix-2 FFT (CPU) │
-                         │   • Plasma cudaHostRegister                   │
-                         └──────────────────────────────────────────────┘
+omnipulse-agent  (Python, MCP control plane)
+      |
+      | 28-char shm name (SHA3-256 digest[:14].hex(), fits macOS PSHMNAMLEN=31)
+      | stdio pipes (newline-delimited JSON-RPC 2.0, no HTTP)
+      v
+omnipulse-rs  (Rust workspace: omnipulse-mcp, vector-index, sliced-wasserstein)
+      |
+      | u64 pinned host pointer (UVA-registered, zero-copy across the seam)
+      | cxx::bridge (zero-marshalling, no intermediate serialization)
+      v
+omni-ffi  (Rust/C++ bridge crate, WST FFI family)
+      |
+      | raw float* / CUdeviceptr
+      v
+omni-wst-core  (C++/CUDA: WSTEngine, Morlet bank, Plasma host register)
+
+     AND separately, via hand-written extern "C" ABI v3 (OmniLock FFI family):
+
+omni-lock-core  (Rust inference crate, omnilock_backend C-ABI, CUDA graph)
+omni-lock-embed (Python: embedder, extractor, Sum-Product decoder)
 ```
 
-Every arrow is **one** of: a 28-char shm name, a `\n`-terminated JSON
-frame, a raw `u64` pointer, or a registered host page. No protobuf,
-no gRPC, no HTTP, no JSON-over-network. That is the design.
+### Two FFI families
+
+There are two FFI seams and they never merge:
+
+1. WST FFI (passive path): `cxx::bridge` between `omni-ffi` (Rust) and
+   `omni-wst-core` (C++/CUDA). The bridge carries UVA-registered host
+   pointers and raw `u64` values; no JSON, no protobuf, no copy.
+
+2. OmniLock FFI (active path): hand-written `extern "C"` ABI v3 in
+   `omni-lock-core/include/omnilock_ffi.h`. Functions:
+   `omnilock_backend_create`, `omnilock_backend_destroy`,
+   `omnilock_capture_inference_graph`, `omnilock_launch_inference_graph`.
+   Status codes: OK=0, ERR_NULL_PTR=-1 through ERR_NOT_INITIALIZED=-5.
+   The two FFI families meet only in the Rust routing code of `omnipulse-mcp`,
+   never in C++.
+
+### Why 28 characters for the shm name
+
+`hashlib.sha3_256(buf).digest()[:14].hex()` produces a 28-character hex string.
+macOS caps POSIX shared-memory names at `PSHMNAMLEN = 31` bytes including the
+leading `/`. 28 characters plus the prefix slash uses 29 bytes and fits every
+macOS and Linux kernel version without conditional logic. The name is a content
+digest, not a counter, so two identical buffers get the same name and the
+second shm_open returns the existing segment without an extra copy.
 
 ---
 
-## Modules — where each package lives
+## What is public and what is not
 
-| Layer | Repo | Package | Quickstart |
-|---|---|---|---|
-| **DSP primitives** (C++/CUDA) | [`samvardhan03/Omnipulse`](https://github.com/samvardhan03/Omnipulse) — `omni-wst-core/` | `omni-wst-core` on PyPI | `pip install omni-wst-core` |
-| **Zero-copy FFI bridge** (Rust ⇄ C++) | [`samvardhan03/Omnipulse`](https://github.com/samvardhan03/Omnipulse) — `omni-ffi/` | `omni-ffi` on crates.io | `cargo add omni-ffi` |
-| **Rust orchestrator + indexes** | [`samvardhan03/Omnipulse`](https://github.com/samvardhan03/Omnipulse) — `omnipulse-rs/` | `vector-index`, `sliced-wasserstein` on crates.io; `omnipulse-mcp` binary | `cargo install omnipulse-mcp` |
-| **Python agentic control plane** | [`samvardhan03/Omnipulse`](https://github.com/samvardhan03/Omnipulse) — `omnipulse-agent/` | `omnipulse-agent` on PyPI | `pip install omnipulse-agent` |
+**Rule:** fixed operators are public; trained artifacts and secrets are private.
 
-If you want the end-to-end demo, install both Python packages and
-the Rust binary in the same environment, set `ANTHROPIC_API_KEY`, and
-run `python -m omnipulse_agent.run --wav your.wav`.
+Public (this repo):
+- All WST/JTFS kernels, Sliced-Wasserstein, HNSW, the cxx bridge
+- The extern "C" ABI v3 and the CUDA graph capture code in omni-lock-core
+- The Sum-Product decoder algorithm in omni-lock-embed (ldpc_decode_soft)
+- The embedder and extractor architecture (network definitions, no weights)
+- omnipulse-agent, omnipulse-mcp, the site, all specs
+
+Private (github.com/samvardhan03/omni):
+- The production LDPC parity-check matrix H and the generator that emits it.
+  Publishing H turns the verify rule into a forgery target; the digest constant
+  LDPC_H_SHA3_DIGEST is compiled into the public tree as a tamper check without
+  revealing the matrix.
+- Trained Mixer weights and the training procedure. The Mixer shapes the
+  residual mask on the write path; publishing weights gives an adversary a
+  warm start on a targeted attack.
+- The Ed25519 issuer key and registry schema (secrets by definition).
+
+The verify path (passive fingerprint, active parity check + signature) uses
+only fixed operators and is fully inspectable in this repo. The write path
+uses trained shaping that stays private. This is a coherent split: anyone
+can audit the verification rule; the embedding quality is our moat.
 
 ---
 
-## Try it (≈ 90 seconds)
+## Quickstart: passive fingerprint path (no private artifacts needed)
+
+The passive path -- fingerprint a media file and insert it into the HNSW index
+-- builds and runs from this repo alone. The active embed/decode path requires
+engine artifacts from the private repo; it fails loudly with instructions if
+those artifacts are absent (see omni-lock-core/build.rs and
+omni-lock-embed/omni_lock/ldpc.py).
+
+### Requirements (passive path)
+
+- Python 3.11+
+- Rust 1.78+ (`rustup show`)
+- C++17 compiler
+- CUDA Toolkit 11.8+ for the GPU path; the CPU Morlet fallback (`--features omni-ffi`)
+  works without CUDA
+
+### Steps
 
 ```bash
-# 1. The math engine (PyPI wheel — C++/CUDA inside)
-pip install omni-wst-core
+git clone https://github.com/samvardhan03/Omnipulse.git
+cd Omnipulse
 
-# 2. The Rust MCP orchestrator binary
-cargo install omnipulse-mcp
+# 1. Python packages
+pip install omni-wst-core omnipulse-agent
 
-# 3. The Python control plane (agentic layer)
-pip install omnipulse-agent
+# 2. Rust MCP orchestrator (passive path, CPU Morlet fallback if no CUDA)
+cargo build -p omnipulse-mcp --features omni-ffi
 
-# 4. Run the demo
+# 3. Fingerprint a WAV file
 export ANTHROPIC_API_KEY=sk-ant-...
 python -m omnipulse_agent.run --wav your.wav
 ```
 
-You will see the four-stage trace: ingest → shm pin → cxx bridge →
-HNSW insert, with the 28-char SHA3 hex shm name printed at each
-boundary.
+You will see the four-stage trace: ingest, shm pin (28-char SHA3 name printed),
+cxx bridge, HNSW insert.
 
 ---
 
-## Repository layout (this showcase)
+## Status
 
-```
-.
-├── README.md                                ← you are here
-├── omni-wst-core/                           ← C++/CUDA DSP engine
-├── omni-ffi/                                ← cxx zero-copy FFI bridge
-├── omnipulse-rs/                            ← Rust workspace (vector-index, sliced-wasserstein, omnipulse-mcp)
-├── omnipulse-agent/                         ← Python agentic control plane
-└── site/                                    ← Next.js marketing site (omnipulse.dev)
-```
-
-The vendored snapshots are kept **for reading only**. They lag the
-canonical per-module repos slightly. Always clone the per-module repo
-if you intend to build or contribute.
-
----
-
-## Maintainers
-
-- **Samvardhan Singh** — C++/CUDA DSP engine ([`omni-wst-core`](https://github.com/samvardhan03/Omnipulse)), the cxx FFI bridge ([`omni-ffi`](https://github.com/samvardhan03/Omnipulse)), and the PyPI agentic control plane ([`omnipulse-agent`](https://github.com/samvardhan03/Omnipulse)). Focus: automation engineering, AI/MLOps pipelines, engineering outcomes. [samvardhan.vercel.app](https://samvardhan.vercel.app/) · shekhawatsamvardhan@gmail.com
-- **Yash Mishra** — Rust crates ([`vector-index`](https://github.com/samvardhan03/Omnipulse), [`sliced-wasserstein`](https://github.com/samvardhan03/Omnipulse)). Focus: concurrent systems, optimal transport, real-time indexing. [linkedin.com/in/mishra-yash2002](https://www.linkedin.com/in/mishra-yash2002/) · yash01012002@gmail.com
-- **Phase 3 — Autonomous Agentic Control Plane** is **co-authored** by Samvardhan and Yash.
-
----
-
-## Sister products
-
-The OmniPulse scattering engine — omni-wst-core, omni-ffi, sliced-wasserstein, vector-index — also
-powers two independent product surfaces built by the same team.
-
-| Product | Domain | One-liner |
+| Property | Status | Note |
 |---|---|---|
-| [**ψ Vikshep**](https://vikshep.vercel.app) | Scientific compute | Wavelet scattering features for physics analyses — mass-decorrelated jet tagging, template-free BSM anomaly detection, rotation-invariant field inference. In pilot with the University of Edinburgh on Geant4-simulated ATLAS diboson data. |
-| [**📡 Drift**](https://drift-site-livid.vercel.app) | Systematic alpha | Quantitative research platform — Cauchy wavelet features over log-returns, rank-transform IC/ICIR signal composition, Black-Litterman and HRP portfolio construction. 182 tests, Sharpe 0.70 on the 3-year synthetic HRP backtest. |
+| Passive fingerprint (audio) | Implemented | WSTEngine, Morlet bank, HNSW, SW1 |
+| Passive fingerprint (image/video) | Implemented | Same kernel family, different input shape |
+| Active embed (OmniLock write path) | Implemented, not production-hardened | Requires engine artifacts; H not yet fixed-seed |
+| Active verify (OmniLock read path) | Implemented | Sum-Product decoder, parity check |
+| Ed25519 registry ledger | Proposed | Infrastructure wired; issuer key not provisioned |
+| 60 FPS real-time embed | Budget, not measured | 38 ms/frame kernel budget on H100; not benchmarked end to end |
+| court-report export | Proposed | VPD designed, not implemented |
 
-Same zero-copy core, same mathematical guarantees, completely different markets.
+---
+
+## Repository layout
+
+```
+omni-wst-core/        C++/CUDA DSP engine (WSTEngine, Morlet bank)
+omni-ffi/             cxx zero-copy FFI bridge (WST FFI family)
+omnipulse-rs/         Rust workspace
+  crates/
+    omnipulse-mcp/    MCP binary (stdio JSON-RPC, HNSW, SW1)
+    vector-index/     concurrent HNSW
+    sliced-wasserstein/ SW1 metric
+    omni-lock-core/   OmniLock C-ABI v3, CUDA graph, build.rs (OmniLock FFI family)
+omni-lock-embed/      Python: embedder, extractor, decoder, Mixer architecture
+omnipulse-agent/      Python MCP control plane
+site/                 Next.js marketing site
+scripts/              FFI separation check, secrets check
+```
 
 ---
 
 ## License
 
-Dual-licensed: **GNU AGPL-3.0** for open-source and research use (see [LICENSE](LICENSE)),
-plus a **Commercial License** for proprietary or production deployments that cannot comply
-with the AGPL-3.0 source-disclosure requirement (see [LICENSING.md](LICENSING.md)).
-
+AGPL-3.0 for open-source and research use. Commercial license for production
+deployments that cannot comply with AGPL source-disclosure requirements.
 Contact shekhawatsamvardhan@gmail.com for commercial terms.
 
 ---
 
-<div align="center">
+## Maintainers
 
-If this repo is useful to you, **star it** so others can find it.
+Samvardhan Singh -- systems, signal processing, CUDA substrate.
+samvardhan.vercel.app / shekhawatsamvardhan@gmail.com
 
-</div>
+Yash Mishra -- scattering research and the passive engine.
+linkedin.com/in/mishra-yash2002
+
+Shreyansh Jain -- agentic systems and the active layer (OmniLock).
+shreyanshjain05.vercel.app / github.com/shreyanshjain05
+
+---
+
+## Contributing
+
+See CONTRIBUTING.md.
