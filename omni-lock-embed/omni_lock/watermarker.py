@@ -12,7 +12,7 @@ import numpy as np
 
 from .embedder import embed_watermark, evaluate_quality
 from .extractor import extract_watermark
-from .ldpc import create_ldpc_code, ldpc_encode, ldpc_decode_soft, TemperatureScaling
+from .ldpc import load_h_from_engine, ldpc_encode, ldpc_decode_soft, TemperatureScaling
 from .video import embed_video, extract_video
 
 
@@ -32,8 +32,9 @@ class OmniLockWatermarker:
         self.key = secret_key
         self.alpha = alpha
 
-        # Create LDPC code via pyldpc
-        self.H, self.G, self.k = create_ldpc_code(n=128, d_v=2, d_c=4)
+        # Load production H matrix from engine artifacts (OMNIPULSE_ENGINE_DIR).
+        # Fails loudly with instructions if artifacts are absent.
+        self.H, self.G, self.k = load_h_from_engine()
 
         # Temperature calibration (will be fit on validation data)
         self.temp_scaler = TemperatureScaling()
