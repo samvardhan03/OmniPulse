@@ -3,7 +3,7 @@ LDPC Error Correction with Soft-Decision Decoding
 
 Adds redundancy to the watermark so errors introduced by attacks
 can be corrected. Uses rate ~0.5 LDPC codes via pyldpc:
-  64 information bits → padded to k → 128 coded bits
+  64 information bits -> padded to k -> 128 coded bits
 
 Key feature: Accepts soft decisions (probabilities) from the extractor
 instead of hard bits, enabling much stronger error correction via
@@ -11,11 +11,104 @@ belief propagation decoding.
 
 Includes temperature calibration to ensure the extractor's confidence
 scores are well-calibrated before feeding to the LDPC decoder.
+
+Public / private split
+----------------------
+The Sum-Product decoder (ldpc_decode_soft) and encoder (ldpc_encode) are
+fixed-operator algorithms and live here. The production parity-check matrix H
+and the code that generates it are private artifacts resolved at build time
+via the env var OMNIPULSE_ENGINE_DIR. Call load_h_from_engine() to obtain (H, G, k); it fails
+loudly with instructions if the artifacts are absent.
+
+The SHA3-256 digest of the production H header is compiled into this module as
+LDPC_H_SHA3_DIGEST. load_h_from_engine() verifies the fetched artifact against
+this digest before returning. This keeps the verify path honest without
+requiring access to the engine repo.
 """
 
+import hashlib
+import os
+import sys
 
 import numpy as np
 import pyldpc
+
+# SHA3-256 digest of the production ldpc_h_tables.npy artifact.
+# Update this constant whenever a new H is cut from the private engine repo.
+# It is the single source of trust that ties a public build to a specific H.
+LDPC_H_SHA3_DIGEST = "PLACEHOLDER_UPDATE_AFTER_FIRST_RELEASE"
+
+
+def load_h_from_engine():
+    """Load (H, G, k) from the private engine artifact directory.
+
+    Looks for OMNIPULSE_ENGINE_DIR in the environment. Expects the directory to
+    contain ldpc/ldpc_h_tables.npy as emitted by ldpc/generate_h.py in the
+    private engine repo.
+
+    Raises SystemExit with a descriptive banner if the artifact is absent,
+    the digest mismatches, or the environment variable is unset.
+
+    Returns
+    -------
+    H : np.ndarray - Parity check matrix
+    G : np.ndarray - Generator matrix
+    k : int - Number of message bits
+    """
+    engine_dir = os.environ.get("OMNIPULSE_ENGINE_DIR", "")
+    artifact = os.path.join(engine_dir, "ldpc", "ldpc_h_tables.npy") if engine_dir else ""
+
+    if not engine_dir or not os.path.isfile(artifact):
+        _fail_missing_engine(artifact)
+
+    data = np.load(artifact)
+    H = data["H"]
+    G = data["G"]
+    k = int(data["k"][0])
+
+    if LDPC_H_SHA3_DIGEST != "PLACEHOLDER_UPDATE_AFTER_FIRST_RELEASE":
+        digest = hashlib.sha3_256(open(artifact, "rb").read()).hexdigest()
+        if digest != LDPC_H_SHA3_DIGEST:
+            sys.stderr.write(
+                "\n"
+                "FATAL: LDPC artifact digest mismatch.\n"
+                f"  Expected: {LDPC_H_SHA3_DIGEST}\n"
+                f"  Got:      {digest}\n"
+                f"  File:     {artifact}\n"
+                "\n"
+                "The artifact does not match the version this build was pinned to.\n"
+                "Fetch the correct release from the engine repo or contact\n"
+                "shekhawatsamvardhan@gmail.com for access.\n"
+                "\n"
+            )
+            sys.exit(1)
+
+    return H, G, k
+
+
+def _fail_missing_engine(artifact_path: str):
+    sys.stderr.write(
+        "\n"
+        "╔══════════════════════════════════════════════════════════════════╗\n"
+        "║  OmniLock active embed/decode requires engine artifacts.         ║\n"
+        "║                                                                  ║\n"
+        "║  This public repo builds the full substrate and the PASSIVE      ║\n"
+        "║  path (fingerprint, HNSW, Sliced-Wasserstein) end to end.        ║\n"
+        "║  The ACTIVE embed/decode path additionally needs:                 ║\n"
+        "║    - ldpc/ldpc_h_tables.npy  (production H matrix)               ║\n"
+        "║    - weights/  (trained Mixer checkpoint)                         ║\n"
+        "║  from a signed release of the private engine repo.               ║\n"
+        "║                                                                  ║\n"
+        "║  Set OMNIPULSE_ENGINE_DIR to the directory containing those       ║\n"
+        "║  artifacts and retry.                                             ║\n"
+        "║                                                                  ║\n"
+        "║  Contact shekhawatsamvardhan@gmail.com for access.               ║\n"
+        "╚══════════════════════════════════════════════════════════════════╝\n"
+        "\n"
+    )
+    if artifact_path:
+        sys.stderr.write(f"  Looked for: {artifact_path}\n\n")
+    sys.exit(1)
 
 class TemperatureScaling:
     """
@@ -61,22 +154,6 @@ class TemperatureScaling:
     def calibrate(self, soft_decisions):
         """Applies learned temperature to new soft decisions."""
         return self._apply_temp(soft_decisions, self.temperature)
-
-
-def create_ldpc_code(n=128, d_v=2, d_c=4):
-    """
-    Generates LDPC parity check and generator matrices.
-    
-    Returns
-    -------
-    H : np.ndarray - Parity check matrix
-    G : np.ndarray - Generator matrix
-    k : int - Number of message bits (info bits)
-    """
-    # pyldpc.make_ldpc creates a regular LDPC code
-    H, G = pyldpc.make_ldpc(n, d_v, d_c, systematic=True, sparse=False)
-    k = G.shape[1] # Number of information bits
-    return H, G, k
 
 
 def ldpc_encode(message, G, k):

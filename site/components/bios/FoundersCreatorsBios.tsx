@@ -1,8 +1,6 @@
 import Eyebrow from "@/components/primitives/Eyebrow";
 import { FOUNDERS, COAUTHORED_NOTE } from "./founders.data";
 
-const COL_SPANS = ["md:col-span-7", "md:col-span-5"] as const;
-
 export default function FoundersCreatorsBios() {
   return (
     <section id="team" style={{ borderBottom: "1px solid var(--rule)" }}>
@@ -13,13 +11,13 @@ export default function FoundersCreatorsBios() {
             className="font-serif font-light"
             style={{ fontSize: "clamp(28px,3.6vw,52px)", color: "var(--ink)" }}
           >
-            The people behind the plane
+            The people behind the platform
           </h2>
         </div>
 
-        <div className="grid grid-cols-12 gap-6">
-          {FOUNDERS.map((f, i) => (
-            <div key={f.name} className={`col-span-12 ${COL_SPANS[i]}`}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {FOUNDERS.map((f) => (
+            <div key={f.name}>
               <div
                 className="border flex flex-col gap-5 h-full"
                 style={{ borderColor: "var(--rule)", padding: 32 }}
@@ -53,7 +51,7 @@ export default function FoundersCreatorsBios() {
                       className="font-mono text-[12px] transition-opacity hover:opacity-60"
                       style={{ color: "var(--ink)" }}
                     >
-                      ↗ {f.portfolio.replace("https://", "")}
+                      {f.portfolio.replace("https://", "")}
                     </a>
                   )}
                   {f.linkedin && (
@@ -62,16 +60,27 @@ export default function FoundersCreatorsBios() {
                       className="font-mono text-[12px] transition-opacity hover:opacity-60"
                       style={{ color: "var(--ink)" }}
                     >
-                      ↗ {f.linkedin.replace("https://", "")}
+                      {f.linkedin.replace("https://", "")}
                     </a>
                   )}
-                  <a
-                    href={`mailto:${f.email}`}
-                    className="font-mono text-[12px] transition-opacity hover:opacity-60"
-                    style={{ color: "var(--ink)" }}
-                  >
-                    ✉ {f.email}
-                  </a>
+                  {"github" in f && f.github && (
+                    <a
+                      href={f.github as string}
+                      className="font-mono text-[12px] transition-opacity hover:opacity-60"
+                      style={{ color: "var(--ink)" }}
+                    >
+                      {(f.github as string).replace("https://", "")}
+                    </a>
+                  )}
+                  {"email" in f && f.email && (
+                    <a
+                      href={`mailto:${f.email}`}
+                      className="font-mono text-[12px] transition-opacity hover:opacity-60"
+                      style={{ color: "var(--ink)" }}
+                    >
+                      email: {f.email}
+                    </a>
+                  )}
                 </div>
 
                 <div
@@ -100,7 +109,7 @@ export default function FoundersCreatorsBios() {
                         className="font-mono text-[11px]"
                         style={{ color: "var(--ink-mute)" }}
                       >
-                        — {m.note}
+                        - {m.note}
                       </span>
                     </a>
                   ))}
@@ -108,20 +117,20 @@ export default function FoundersCreatorsBios() {
               </div>
             </div>
           ))}
-
-          <aside
-            className="col-span-12 mt-4 border-t pt-6 font-mono text-[13px]"
-            style={{ borderColor: "var(--rule)", color: "var(--ink-mute)" }}
-          >
-            Co-authored:{" "}
-            <strong style={{ color: "var(--ink)" }}>
-              Phase 3 — The Agentic Control Plane
-            </strong>{" "}
-            is jointly maintained by <em>Samvardhan</em> and <em>Yash</em> across{" "}
-            <code>omnipulse-agent</code> (Python) and the{" "}
-            <code>omnipulse-mcp</code> server in <code>omnipulse-rs</code>.
-          </aside>
         </div>
+
+        <aside
+          className="col-span-12 mt-4 border-t pt-6 font-mono text-[13px]"
+          style={{ borderColor: "var(--rule)", color: "var(--ink-mute)" }}
+        >
+          Co-authored:{" "}
+          <strong style={{ color: "var(--ink)" }}>
+            Phase 3: The Agentic Control Plane
+          </strong>{" "}
+          is jointly maintained by <em>Samvardhan</em> and <em>Yash</em> across{" "}
+          <code>omnipulse-agent</code> (Python) and the{" "}
+          <code>omnipulse-mcp</code> server in <code>omnipulse-rs</code>.
+        </aside>
       </div>
     </section>
   );

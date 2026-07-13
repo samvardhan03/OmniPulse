@@ -131,7 +131,7 @@ export default function FilterBankExplorer() {
             {/* Time domain */}
             <div className="flex flex-col gap-2">
               <p className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "var(--ink-mute)" }}>
-                Time domain — λ={selectedLambda}
+                Time domain: λ={selectedLambda}
               </p>
               <canvas
                 ref={timeDomainRef}
@@ -143,7 +143,7 @@ export default function FilterBankExplorer() {
             {/* Frequency domain */}
             <div className="flex flex-col gap-2">
               <p className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "var(--ink-mute)" }}>
-                Frequency domain — bank
+                Frequency domain: bank
               </p>
               <div
                 className="border relative overflow-hidden"

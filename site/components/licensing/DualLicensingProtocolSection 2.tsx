@@ -2,17 +2,17 @@ import Eyebrow from "@/components/primitives/Eyebrow";
 import HairlineRule from "@/components/primitives/HairlineRule";
 
 const rows = [
-  { label: "Source code access", oss: "yes (full)", commercial: "yes (full)" },
-  { label: "Modify and redistribute", oss: "yes", commercial: "yes (subject to contract)" },
-  { label: "Production deployment", oss: "research only", commercial: "yes" },
-  { label: "Closed-source distribution", oss: "no", commercial: "yes" },
-  { label: "SLA / support", oss: "no", commercial: "yes, 24/7 enterprise" },
-  { label: "GPU autoscaling deployment", oss: "no", commercial: "yes" },
+  { label: "Source code access", oss: "✓ full", commercial: "✓ full" },
+  { label: "Modify and redistribute", oss: "✓", commercial: "✓ (subject to contract)" },
+  { label: "Production deployment", oss: "⚠ research", commercial: "✓" },
+  { label: "Closed-source distribution", oss: "✗", commercial: "✓" },
+  { label: "SLA / support", oss: "✗", commercial: "✓ 24/7 enterprise" },
+  { label: "GPU autoscaling deployment", oss: "✗", commercial: "✓" },
   { label: "License-token issuance volume", oss: "unlimited test", commercial: "contracted tier" },
   { label: "Ed25519 key custody", oss: "self-managed", commercial: "managed HSM optional" },
   { label: "IPFS pinning service", oss: "self-hosted", commercial: "managed" },
   { label: "Audit attestations", oss: "community", commercial: "SOC 2 + ISO 27001 (roadmap)" },
-  { label: "Indemnification", oss: "no", commercial: "yes" },
+  { label: "Indemnification", oss: "✗", commercial: "✓" },
 ];
 
 export default function DualLicensingProtocolSection() {
@@ -25,7 +25,7 @@ export default function DualLicensingProtocolSection() {
             className="font-serif font-light"
             style={{ fontSize: "clamp(28px,3.6vw,52px)", color: "var(--ink)" }}
           >
-            AGPL-3.0 + Commercial vs Enterprise
+            Apache 2.0 vs Commercial Enterprise
           </h2>
         </div>
 
@@ -37,7 +37,7 @@ export default function DualLicensingProtocolSection() {
                   Capability
                 </th>
                 <th className="text-left py-3 px-4 font-mono text-[12px] uppercase tracking-[0.14em]" style={{ color: "var(--ink)" }}>
-                  AGPL-3.0 + Commercial
+                  Apache 2.0
                 </th>
                 <th className="text-left py-3 pl-8 font-mono text-[12px] uppercase tracking-[0.14em]" style={{ color: "var(--accent)" }}>
                   Commercial Enterprise
@@ -54,9 +54,9 @@ export default function DualLicensingProtocolSection() {
                     className="py-4 px-4 font-mono text-[13px]"
                     style={{
                       color:
-                        row.oss.startsWith("yes")
+                        row.oss.startsWith("✓")
                           ? "var(--ink)"
-                          : row.oss.startsWith("no")
+                          : row.oss.startsWith("✗")
                           ? "var(--ink-mute)"
                           : "var(--signal-warm)",
                     }}
@@ -78,9 +78,9 @@ export default function DualLicensingProtocolSection() {
         <div className="mt-10 flex flex-col gap-2 max-w-[640px]">
           <p className="text-[15px] leading-[1.6]" style={{ color: "var(--ink-mute)" }}>
             Every Rust crate and Python module in this workspace is published
-            under the <code className="font-mono text-[13px]">AGPL-3.0-or-later</code>{" "}
+            under the <code className="font-mono text-[13px]">Apache-2.0</code>{" "}
             SPDX identifier (see{" "}
-            <a href="https://github.com/samvardhan03/Omnipulse/blob/main/LICENSING.md" className="transition-opacity hover:opacity-60" style={{ color: "var(--ink)" }}>LICENSING.md</a>). Commercial
+            <code className="font-mono text-[12px]">omnipulse-rs/Cargo.toml:16</code>). Commercial
             enterprise agreements unlock production SLAs, managed infrastructure,
             and indemnification.
           </p>

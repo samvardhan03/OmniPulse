@@ -4,7 +4,7 @@ import TierPageShell from "@/components/tiers/TierPageShell";
 import FilterBankExplorer from "@/components/tiers/phase-1/FilterBankExplorer";
 
 export const metadata = {
-  title: "Phase I — DSP Primitives · OmniPulse",
+  title: "Phase I: DSP Primitives · OmniPulse",
   description: "Wavelet scattering, shipped as a wheel. C++/CUDA primitives for audio, vibration, and biosignal pipelines.",
 };
 
@@ -19,7 +19,7 @@ export default function Phase1Page() {
         sub="Drop-in C++/CUDA primitives for any audio, vibration, or biosignal pipeline that needs translation-invariant, frequency-aware fingerprints. AGPL-3.0 + Commercial."
         diagram={<FilterBankExplorer />}
         whatYouGet={[
-          "omni-wst-core PyPI wheel — WSTEngine<HopperTag, J, Q> + analytic Morlet bank + Radix-2 FFT CPU fallback.",
+          "omni-wst-core PyPI wheel: WSTEngine<HopperTag, J, Q> + analytic Morlet bank + Radix-2 FFT CPU fallback.",
           "JTFS (joint time-frequency scattering) on dual CUDA streams.",
           "15+ GB/s DMA via cudaHostRegister on pinned Plasma pages.",
         ]}
@@ -27,7 +27,7 @@ export default function Phase1Page() {
           "Spectrogram-and-CNN pipelines burn enormous compute to learn what scattering provides analytically.",
           "WST gives you orderable, comparable fingerprints with formal stability guarantees, in milliseconds.",
         ]}
-        pricingNote="AGPL-3.0 — free for research & open source"
+        pricingNote="AGPL-3.0: free for research & open source"
         enterpriseUseCases={[
           {
             title: "Audio QA / royalty enforcement",

@@ -6,31 +6,34 @@ import Eyebrow from "@/components/primitives/Eyebrow";
 export const TIERS = [
   {
     phase: "I",
-    title: "Phase I — Institutional Research",
+    title: "Phase I: Institutional Research",
     sub: "Standalone DSP wheels for desktop labs and HPC clusters. C++/CUDA Wavelet Scattering primitives, no orchestration required. AGPL-3.0 + Commercial.",
+    how: "Passive audio only.",
     pkg: "pip install omni-wst-core",
     externalHref: "https://pypi.org/project/omni-wst-core/",
-    externalLabel: "↗ View on PyPI",
+    externalLabel: "View on PyPI",
     deepdiveHref: "/tiers/phase-1-dsp",
     commercial: false,
   },
   {
     phase: "II",
-    title: "Phase II — High-Velocity Concurrent Processing",
+    title: "Phase II: High-Velocity Concurrent Processing",
     sub: "The vector substrate. omni-hnsw + sliced-wasserstein Rust crates for sub-millisecond nearest-neighbour over billion-scale fingerprint catalogues. AGPL-3.0 + Commercial.",
+    how: "Passive across all modalities, small catalogue.",
     pkg: "cargo add vector-index sliced-wasserstein",
     externalHref: "https://crates.io/crates/vector-index",
-    externalLabel: "↗ View on crates.io",
+    externalLabel: "View on crates.io",
     deepdiveHref: "/tiers/phase-2-vector",
     commercial: false,
   },
   {
     phase: "III",
-    title: "Phase III — Autonomous Agentic Control",
+    title: "Phase III: Autonomous Agentic Control",
     sub: "Drop-in MCP server. omnipulse-agent parses operator requests and routes them to the Rust orchestrator over line-delimited JSON-RPC 2.0. AGPL-3.0 + Commercial.",
+    how: "Active embed for images and video, full catalogue.",
     pkg: "pip install omnipulse-agent",
     externalHref: "https://pypi.org/project/omnipulse-agent/",
-    externalLabel: "↗ View on PyPI",
+    externalLabel: "View on PyPI",
     deepdiveHref: "/tiers/phase-3-agent",
     commercial: false,
   },
@@ -38,9 +41,10 @@ export const TIERS = [
     phase: "ENTERPRISE",
     title: "Enterprise SaaS Pipeline",
     sub: "Cloud-native multi-tenant deployment. Kubernetes control plane, GPU autoscaling driven by Prometheus queue depth, ed25519-signed license tokens, IPFS pinning.",
+    how: "Dedicated instance, versioned verification procedures.",
     pkg: "",
     externalHref: "mailto:shekhawatsamvardhan@gmail.com",
-    externalLabel: "Talk to founders →",
+    externalLabel: "Talk to founders",
     deepdiveHref: "/tiers/enterprise",
     commercial: true,
   },
@@ -227,6 +231,10 @@ export default function ModularCommercializationGrid() {
 
                 <p className="text-[15px] leading-[1.6]" style={{ color: "var(--ink-mute)" }}>
                   {tier.sub}
+                </p>
+                <p className="text-[13px] leading-[1.55]" style={{ color: "var(--ink)" }}>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] mr-2" style={{ color: "var(--ink-mute)" }}>Scope:</span>
+                  {tier.how}
                 </p>
 
                 {tier.pkg ? (

@@ -4,9 +4,9 @@ import HairlineRule from "@/components/primitives/HairlineRule";
 import SiteFooter from "@/components/footer/SiteFooter";
 
 export const metadata = {
-  title: "Licensing: OmniPulse",
+  title: "Licensing — OmniPulse",
   description:
-    "AGPL-3.0 + Commercial: the OmniPulse dual-licensing model.",
+    "Apache 2.0 vs. Commercial Enterprise — the OmniPulse dual-licensing matrix.",
 };
 
 export default function LicensingPage() {

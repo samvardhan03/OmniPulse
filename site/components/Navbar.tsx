@@ -5,8 +5,8 @@ import Link from "next/link";
 const navLinks = [
   { label: "Platform", href: "#platform" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Docs", href: "#" },
-  { label: "Changelog", href: "#" },
+  { label: "Team", href: "#team" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {

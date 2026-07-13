@@ -21,6 +21,7 @@ const NAV_COLS = [
     title: "Company",
     links: [
       { label: "About", href: "/#team" },
+      { label: "Talk to us", href: "/#contact" },
       { label: "Contact", href: "mailto:shekhawatsamvardhan@gmail.com" },
     ],
   },
