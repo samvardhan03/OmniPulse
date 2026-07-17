@@ -26,7 +26,7 @@ export const FOUNDERS = [
     portfolio: undefined as string | undefined,
     github: undefined as string | undefined,
     linkedin: "https://www.linkedin.com/in/mishra-yash2002/",
-    email: "yash01012002@gmail.com",
+    email: "shekhawatsamvardhan@gmail.com",
   },
   {
     name: "Shreyansh Jain",

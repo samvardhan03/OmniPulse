@@ -13,12 +13,8 @@ L_DisCo(θ; λ) = wBCE(ŷ, y; w) + λ · dCorr²_w(ŷ, m | bkg)
 
 Feature extraction
 ------------------
-When vikshep.scattering (CUDA) is available:
-    r₂ = reduce_scattering(compute_scattering(img, dim=2, group="so2", J=4, L=8), method="ratio")
-
-On non-CUDA hosts:
-    A CPU proxy r₂ is computed from the image using multi-scale Gaussian
-    energy ratios — same structural interpretation, no GPU required.
+r₂ is computed from the image using multi-scale Gaussian energy ratios
+(two-scale decomposition: fine sigma=1, coarse sigma=4).
 
 Training approach
 -----------------
@@ -56,41 +52,11 @@ def _cpu_r2(img: np.ndarray, sigma_fine: float = 1.0, sigma_coarse: float = 4.0)
     return float(s2_proxy / s1_proxy)
 
 
-def _cuda_r2(img: np.ndarray) -> float:
-    """Use vikshep CUDA engine: compute_scattering(dim=2, group=so2, J=4, L=8) → ratio."""
-    import vikshep
-    arr    = np.ascontiguousarray(img, dtype=np.float32)
-    coeffs = vikshep.scattering(arr, dim=2, group="so2", J=4, Q=1, L=8, order=2)
-    half   = len(coeffs) // 2
-    s1     = float(np.mean(coeffs[:half])) + 1e-12
-    s2     = float(np.mean(coeffs[half:]))
-    return s2 / s1
-
-
-def extract_r2(events: list[dict], cuda: bool | None = None) -> np.ndarray:
-    """
-    Extract per-event r₂ features.  Returns shape (N,).
-
-    If cuda is None, attempts CUDA first and falls back to CPU.
-    """
-    if cuda is None:
-        try:
-            import vikshep as _v
-            cuda = _v.cuda_available()
-        except ImportError:
-            cuda = False
-
+def extract_r2(events: list[dict]) -> np.ndarray:
+    """Extract per-event r₂ features via CPU multi-scale decomposition. Returns shape (N,)."""
     r2_vals: list[float] = []
     for ev in events:
-        if cuda:
-            try:
-                r2_vals.append(_cuda_r2(ev["img"]))
-                continue
-            except Exception as exc:
-                print(f"[train_disco] CUDA r₂ failed ({exc}); switching to CPU", file=sys.stderr)
-                cuda = False
         r2_vals.append(_cpu_r2(ev["img"]))
-
     return np.array(r2_vals, dtype=np.float32)
 
 
@@ -324,7 +290,7 @@ if __name__ == "__main__":
     weights = np.ones(len(events), dtype=np.float32)
 
     print("Extracting r₂ features (CPU)…")
-    r2 = extract_r2(events, cuda=False)
+    r2 = extract_r2(events)
     X  = r2[:, None]
 
     print("Sweeping λ…")

@@ -1,7 +1,7 @@
 """
 load_geant4.py — Geant4 / ROOT calorimeter event loader for the pilot.
 
-When a .root file is provided, delegates to the vikshep-ingest ROOT/uproot loader.
+When a .root file is provided, delegates to a ROOT/uproot loader (requires uproot).
 When no file is given, or on hosts without uproot/ROOT, generates synthetic
 η×φ calorimeter images that mimic single-prong QCD jets (background) and
 two-prong top/W jets (signal).
@@ -142,31 +142,8 @@ def load_events(
 
 
 def _load_root(path: str, write_shm: bool, seed: int) -> list[dict]:
-    try:
-        from vikshep_ingest.loaders.root_uproot import RootUprootLoader
-        loader = RootUprootLoader()
-        arr, meta = loader.load(path)
-        rng = np.random.default_rng(seed)
-        events = []
-        imgs = arr if arr.ndim == 3 else arr[np.newaxis]
-        n = len(imgs)
-        labels = rng.random(n) < 0.3
-        for i, img in enumerate(imgs):
-            img32 = np.ascontiguousarray(img, dtype=np.float32)
-            oid = _ingest_to_shm(img32) if write_shm else ""
-            events.append({
-                "img":        img32,
-                "is_signal":  bool(labels[i]),
-                "mass":       float(abs(rng.normal(80, 15))),
-                "weight":     1.0,
-                "oid":        oid,
-                "signal_len": int(img32.size),
-                "meta":       meta.copy(),
-            })
-        return events
-    except Exception as exc:
-        print(f"[load_geant4] root loader: {exc}", file=sys.stderr)
-        return []
+    print("[load_geant4] ROOT file loading is not supported; pass path=None for synthetic data.", file=sys.stderr)
+    return []
 
 
 if __name__ == "__main__":
