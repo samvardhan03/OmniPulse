@@ -12,9 +12,9 @@ const NAV_COLS = [
   {
     title: "Resources",
     links: [
-      { label: "Docs ↗", href: "https://github.com/samvardhan03/omnipulse-agent#readme" },
+      { label: "Docs ↗", href: "https://github.com/samvardhan03/Omnipulse" },
       { label: "Changelog", href: "#" },
-      { label: "GitHub ↗", href: "https://github.com/samvardhan03/omnipulse" },
+      { label: "GitHub ↗", href: "https://github.com/samvardhan03/Omnipulse" },
     ],
   },
   {

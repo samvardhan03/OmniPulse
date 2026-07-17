@@ -8,7 +8,16 @@ Run with: python -m pytest tests/test_temporal.py -v
 """
 
 import numpy as np
+import pyldpc
 import pytest
+
+
+def _make_test_ldpc(n=128):
+    """Build a deterministic test H/G matrix without production artifacts."""
+    np.random.seed(0)
+    H, G = pyldpc.make_ldpc(n, 2, 4, systematic=True, sparse=True)
+    k = G.shape[1]
+    return H, G, k
 
 
 def make_test_frame(h=128, w=128, seed=0):
@@ -219,9 +228,8 @@ class TestTemporalVideo:
 
     def test_embed_returns_correct_count(self):
         from omni_lock.temporal_video import embed_video_temporal
-        from omni_lock.ldpc import create_ldpc_code
 
-        H, G, k = create_ldpc_code(n=128)
+        H, G, k = _make_test_ldpc()
         frames = [make_test_frame(128, 128, seed=i) for i in range(8)]
         wm_id = np.random.RandomState(42).randint(0, 2, size=64)
 
@@ -233,9 +241,8 @@ class TestTemporalVideo:
 
     def test_metadata_has_required_fields(self):
         from omni_lock.temporal_video import embed_video_temporal
-        from omni_lock.ldpc import create_ldpc_code
 
-        H, G, k = create_ldpc_code(n=128)
+        H, G, k = _make_test_ldpc()
         frames = [make_test_frame(128, 128, seed=i) for i in range(4)]
         wm_id = np.random.RandomState(42).randint(0, 2, size=64)
 
@@ -251,9 +258,8 @@ class TestTemporalVideo:
         from omni_lock.temporal_video import (
             embed_video_temporal, extract_video_temporal
         )
-        from omni_lock.ldpc import create_ldpc_code
 
-        H, G, k = create_ldpc_code(n=128)
+        H, G, k = _make_test_ldpc()
         frames = [make_test_frame(128, 128, seed=i) for i in range(8)]
         wm_id = np.random.RandomState(42).randint(0, 2, size=64)
 
@@ -285,9 +291,8 @@ class TestTemporalVideo:
 
     def test_extract_needs_min_frames(self):
         from omni_lock.temporal_video import extract_video_temporal
-        from omni_lock.ldpc import create_ldpc_code
 
-        H, G, k = create_ldpc_code(n=128)
+        H, G, k = _make_test_ldpc()
         frames = [make_test_frame(64, 64, seed=0)]
 
         with pytest.raises(ValueError, match="at least"):

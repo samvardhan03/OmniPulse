@@ -5,7 +5,16 @@ Run with: python -m pytest tests/test_phase1.py -v
 """
 
 import numpy as np
+import pyldpc
 import pytest
+
+
+def _make_test_ldpc(n=128):
+    """Build a deterministic test H/G matrix without production artifacts."""
+    np.random.seed(0)
+    H, G = pyldpc.make_ldpc(n, 2, 4, systematic=True, sparse=True)
+    k = G.shape[1]
+    return H, G, k
 
 
 # ---------------------------------------------------------------------------
@@ -151,8 +160,8 @@ class TestLDPC:
     """Test LDPC encoding/decoding and temperature calibration."""
 
     def test_encode_produces_valid_codeword(self):
-        from omni_lock.ldpc import create_ldpc_code, ldpc_encode
-        H, G, k = create_ldpc_code(n=128)
+        from omni_lock.ldpc import ldpc_encode
+        H, G, k = _make_test_ldpc()
         msg = np.random.RandomState(0).randint(0, 2, size=64)
 
         codeword_bpsk, padded = ldpc_encode(msg, G, k)
@@ -162,8 +171,8 @@ class TestLDPC:
 
     def test_decode_noiseless(self):
         """Perfect soft decisions → perfect decode."""
-        from omni_lock.ldpc import create_ldpc_code, ldpc_encode, ldpc_decode_soft
-        H, G, k = create_ldpc_code(n=128)
+        from omni_lock.ldpc import ldpc_encode, ldpc_decode_soft
+        H, G, k = _make_test_ldpc()
         msg = np.random.RandomState(0).randint(0, 2, size=64)
         codeword_bpsk, padded = ldpc_encode(msg, G, k)
 
@@ -175,8 +184,8 @@ class TestLDPC:
 
     def test_decode_with_moderate_noise(self):
         """Should recover with moderate noise."""
-        from omni_lock.ldpc import create_ldpc_code, ldpc_encode, ldpc_decode_soft
-        H, G, k = create_ldpc_code(n=128)
+        from omni_lock.ldpc import ldpc_encode, ldpc_decode_soft
+        H, G, k = _make_test_ldpc()
         rng = np.random.RandomState(1)
         successes = 0
         trials = 20

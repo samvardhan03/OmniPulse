@@ -5,37 +5,31 @@ It pairs two complementary verification modes on a shared substrate: OmniLock
 embeds a cryptographically signed 64-bit identifier into a video or image at
 creation (active, write-path), and OmniPulse computes a deterministic
 wavelet-scattering fingerprint that matches any derivative without cooperation
-at creation (passive, read-path). Both layers write to the same signed ledger
-and run on the same CUDA/Rust/Python substrate. The verify path is fixed-operator
-mathematics -- a linear parity check and an HNSW nearest-neighbor query -- so
-the verdict does not depend on a black-box service or on this team being
-available.
+at creation (passive, read-path). Both layers write to the same Ed25519-signed
+ledger and run on the same CUDA/Rust/Python substrate. The verify path is
+fixed-operator mathematics -- a linear parity check and an HNSW
+nearest-neighbor query -- so the verdict does not depend on a black-box service
+or on this team being available.
+
+**Live site:** https://omnipulseid.vercel.app
 
 ---
 
-## Architecture
+## Repository layout
 
 ```
-omnipulse-agent  (Python, MCP control plane)
-      |
-      | 28-char shm name (SHA3-256 digest[:14].hex(), fits macOS PSHMNAMLEN=31)
-      | stdio pipes (newline-delimited JSON-RPC 2.0, no HTTP)
-      v
-omnipulse-rs  (Rust workspace: omnipulse-mcp, vector-index, sliced-wasserstein)
-      |
-      | u64 pinned host pointer (UVA-registered, zero-copy across the seam)
-      | cxx::bridge (zero-marshalling, no intermediate serialization)
-      v
-omni-ffi  (Rust/C++ bridge crate, WST FFI family)
-      |
-      | raw float* / CUdeviceptr
-      v
-omni-wst-core  (C++/CUDA: WSTEngine, Morlet bank, Plasma host register)
-
-     AND separately, via hand-written extern "C" ABI v3 (OmniLock FFI family):
-
-omni-lock-core  (Rust inference crate, omnilock_backend C-ABI, CUDA graph)
-omni-lock-embed (Python: embedder, extractor, Sum-Product decoder)
+omni-wst-core/          C++/CUDA DSP engine (WSTEngine, Morlet bank, Plasma shm)
+omni-ffi/               cxx zero-copy FFI bridge (WST FFI family)
+omnipulse-rs/           Rust workspace
+  crates/
+    omnipulse-mcp/      MCP binary (stdio JSON-RPC, HNSW, SW1, routing)
+    vector-index/       concurrent HNSW
+    sliced-wasserstein/ SW1 metric
+    omni-lock-core/     OmniLock C-ABI v3, CUDA graph, build.rs gating
+omni-lock-embed/        Python: embedder, extractor, Sum-Product decoder, Mixer arch
+omnipulse-agent/        Python MCP control plane
+site/                   Next.js marketing site (omnipulseid.vercel.app)
+scripts/                FFI-separation and secrets CI checks
 ```
 
 ### Two FFI families
@@ -76,15 +70,19 @@ Public (this repo):
 - The embedder and extractor architecture (network definitions, no weights)
 - omnipulse-agent, omnipulse-mcp, the site, all specs
 
-Private (github.com/samvardhan03/omni):
+Private (github.com/samvardhan03/omnipulse-engine):
 - The production LDPC parity-check matrix H and the generator that emits it.
   Publishing H turns the verify rule into a forgery target; the digest constant
-  LDPC_H_SHA3_DIGEST is compiled into the public tree as a tamper check without
-  revealing the matrix.
+  `LDPC_H_SHA3_DIGEST` is compiled into the public tree as a tamper check
+  without revealing the matrix.
 - Trained Mixer weights and the training procedure. The Mixer shapes the
   residual mask on the write path; publishing weights gives an adversary a
   warm start on a targeted attack.
 - The Ed25519 issuer key and registry schema (secrets by definition).
+
+The active embed/decode path hard-exits at build and runtime if `OMNIPULSE_ENGINE_DIR`
+is unset or does not contain the required artifacts. The passive fingerprint
+path has no such gate and builds from this repo alone.
 
 The verify path (passive fingerprint, active parity check + signature) uses
 only fixed operators and is fully inspectable in this repo. The write path
@@ -98,8 +96,8 @@ can audit the verification rule; the embedding quality is our moat.
 The passive path -- fingerprint a media file and insert it into the HNSW index
 -- builds and runs from this repo alone. The active embed/decode path requires
 engine artifacts from the private repo; it fails loudly with instructions if
-those artifacts are absent (see omni-lock-core/build.rs and
-omni-lock-embed/omni_lock/ldpc.py).
+those artifacts are absent (see `omni-lock-core/build.rs` and
+`omni-lock-embed/omni_lock/ldpc.py`).
 
 ### Requirements (passive path)
 
@@ -137,30 +135,13 @@ cxx bridge, HNSW insert.
 |---|---|---|
 | Passive fingerprint (audio) | Implemented | WSTEngine, Morlet bank, HNSW, SW1 |
 | Passive fingerprint (image/video) | Implemented | Same kernel family, different input shape |
-| Active embed (OmniLock write path) | Implemented, not production-hardened | Requires engine artifacts; H not yet fixed-seed |
+| Active embed (OmniLock write path) | Implemented, not production-hardened | Requires engine artifacts; H seed not yet fixed |
 | Active verify (OmniLock read path) | Implemented | Sum-Product decoder, parity check |
 | Ed25519 registry ledger | Proposed | Infrastructure wired; issuer key not provisioned |
-| 60 FPS real-time embed | Budget, not measured | 38 ms/frame kernel budget on H100; not benchmarked end to end |
-| court-report export | Proposed | VPD designed, not implemented |
-
----
-
-## Repository layout
-
-```
-omni-wst-core/        C++/CUDA DSP engine (WSTEngine, Morlet bank)
-omni-ffi/             cxx zero-copy FFI bridge (WST FFI family)
-omnipulse-rs/         Rust workspace
-  crates/
-    omnipulse-mcp/    MCP binary (stdio JSON-RPC, HNSW, SW1)
-    vector-index/     concurrent HNSW
-    sliced-wasserstein/ SW1 metric
-    omni-lock-core/   OmniLock C-ABI v3, CUDA graph, build.rs (OmniLock FFI family)
-omni-lock-embed/      Python: embedder, extractor, decoder, Mixer architecture
-omnipulse-agent/      Python MCP control plane
-site/                 Next.js marketing site
-scripts/              FFI separation check, secrets check
-```
+| Passive fingerprint latency | sub-40 ms/clip (measured) | Morlet bank + SW1 on a single audio clip |
+| Active embed real-time target | 16.7 ms/frame budget | 1000 ms / 60 FPS; kernel time not yet measured end to end |
+| LDPC H matrix sync | Blocked | Tracked blocker: production H requires private-seed generation in engine repo |
+| Court-report export | Proposed | VPD designed, not implemented |
 
 ---
 
@@ -169,6 +150,8 @@ scripts/              FFI separation check, secrets check
 AGPL-3.0 for open-source and research use. Commercial license for production
 deployments that cannot comply with AGPL source-disclosure requirements.
 Contact shekhawatsamvardhan@gmail.com for commercial terms.
+
+See LICENSING.md for the dual-licensing model. See LICENSE for the full AGPL-3.0 text.
 
 ---
 

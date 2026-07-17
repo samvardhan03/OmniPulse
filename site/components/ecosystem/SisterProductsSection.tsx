@@ -5,19 +5,6 @@ import Eyebrow from "@/components/primitives/Eyebrow";
 
 const PRODUCTS = [
   {
-    wordmark: "ψ Vikshep",
-    domain: "SCIENTIFIC COMPUTE · vikshep.vercel.app",
-    tagline: "Deterministic features for physics. Nothing learned, nothing leaked.",
-    body: "Wavelet scattering features for physics analyses: mass-decorrelated jet tagging, template-free BSM anomaly detection, rotation-invariant field inference. Because the filters are fixed by the mathematics of the scattering transform and not by training, the features cannot secretly encode the resonance mass, so a downstream cut cannot sculpt a fake bump into a smooth background. Currently in pilot with the University of Edinburgh on Geant4-simulated ATLAS diboson data.",
-    stats: [
-      "1-D / 2-D / 3-D runtime config",
-      "SE(2) · SO(3) invariance",
-      "r₂ + DisCo decorrelation",
-    ],
-    cta: "Visit Vikshep →",
-    href: "https://vikshep.vercel.app",
-  },
-  {
     wordmark: "Drift",
     domain: "SYSTEMATIC ALPHA · drift-site-livid.vercel.app",
     tagline: "From log-returns to alpha. Seven layers. Zero black boxes.",
@@ -105,7 +92,7 @@ export default function SisterProductsSection() {
             className="font-serif font-light"
             style={{ fontSize: "clamp(28px,3.6vw,52px)", color: "var(--ink)" }}
           >
-            Two sister products. Same data plane. Different physics.
+            A sister product. Same data plane. Different market.
           </h2>
           <p
             className="text-[17px] leading-[1.6] max-w-[640px]"
@@ -130,8 +117,8 @@ export default function SisterProductsSection() {
           className="mt-8 text-center font-mono text-[12px]"
           style={{ color: "var(--ink-mute)" }}
         >
-          Three product surfaces. One engine, dual-licensed AGPL-3.0 + Commercial.
-          Maintained by the same three people.
+          Two product surfaces. One engine, dual-licensed AGPL-3.0 + Commercial.
+          Maintained by the same team.
         </p>
       </div>
     </section>
