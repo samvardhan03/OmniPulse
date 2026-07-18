@@ -4,7 +4,7 @@ benchmark.py — End-to-end pilot benchmark: Geant4 → r₂ → DisCo / anomaly
 Pipeline
 --------
   1. ingest   : load_events() → per-event OIDs in POSIX shm
-  2. features : compute r₂ via vikshep.scattering (CUDA) or CPU proxy fallback
+  2. features : compute r₂ via CPU multi-scale Gaussian decomposition
   3. disco    : train DisCo classifier for λ ∈ [0, 0.1, 1, 10]
   4. anomaly  : build HNSW index from background r₂; query signal → anomaly scores
   5. metrics  : report Δσ (Asimov significance) and ΔJSD (mass decorrelation)
@@ -160,7 +160,7 @@ def run_benchmark(
 
     # ── 1. Feature extraction ────────────────────────────────────────────────
     print("[benchmark] Extracting r₂ features…")
-    r2 = extract_r2(events)                         # CUDA if available; else CPU proxy
+    r2 = extract_r2(events)
 
     print("[benchmark] Extracting 8-feature baseline…")
     X8 = extract_baseline_features(events)

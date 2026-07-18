@@ -13,7 +13,6 @@ export default function KernelLane({ active, useGpu, onToggle }: KernelLaneProps
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2 justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-[16px]">⚙️</span>
           <span className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "var(--ink-mute)" }}>
             C++/CUDA kernel
           </span>
@@ -38,7 +37,7 @@ export default function KernelLane({ active, useGpu, onToggle }: KernelLaneProps
       >
         {useGpu ? (
           <>
-            <span style={{ color: "var(--ink-mute)" }}>{"// CUDA Hopper — wst_bridge_cuda.cpp"}</span>
+            <span style={{ color: "var(--ink-mute)" }}>{"// CUDA Hopper - wst_bridge_cuda.cpp"}</span>
             {"\n"}
             <span style={{ color: "var(--accent)" }}>{"WSTEngine"}</span>
             <span style={{ color: "var(--ink)" }}>{"<HopperTag, /*J=*/8, /*Q=*/16> engine;"}</span>
@@ -47,7 +46,7 @@ export default function KernelLane({ active, useGpu, onToggle }: KernelLaneProps
           </>
         ) : (
           <>
-            <span style={{ color: "var(--ink-mute)" }}>{"// CPU Morlet fallback — wst_bridge_cpu.cpp"}</span>
+            <span style={{ color: "var(--ink-mute)" }}>{"// CPU Morlet fallback - wst_bridge_cpu.cpp"}</span>
             {"\n"}
             <span style={{ color: "var(--accent)" }}>{"AnalyticMorletBank"}</span>
             <span style={{ color: "var(--ink)" }}>{"<8, 16> bank;"}</span>

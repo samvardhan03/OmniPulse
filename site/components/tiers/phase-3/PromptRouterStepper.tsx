@@ -84,7 +84,7 @@ export default function PromptRouterStepper() {
             className="font-mono text-[11px] uppercase tracking-[0.14em]"
             style={{ color: "var(--ink-mute)" }}
           >
-            Pane 1 — Anthropic Claude
+            Pane 1: Anthropic Claude
           </p>
           <div
             className="border p-4 font-mono text-[12px] min-h-[100px]"
@@ -115,13 +115,13 @@ export default function PromptRouterStepper() {
           </div>
         </div>
 
-        {/* Pane 2 — JSON-RPC bus */}
+        {/* Pane 2: JSON-RPC bus */}
         <div className="flex flex-col gap-2">
           <p
             className="font-mono text-[11px] uppercase tracking-[0.14em]"
             style={{ color: "var(--ink-mute)" }}
           >
-            Pane 2 — JSON-RPC bus
+            Pane 2: JSON-RPC bus
           </p>
           <div
             className="border p-4 font-mono text-[12px] min-h-[120px] overflow-auto relative"
@@ -157,13 +157,13 @@ export default function PromptRouterStepper() {
           </div>
         </div>
 
-        {/* Pane 3 — Rust + GPU kernel */}
+        {/* Pane 3: Rust + GPU kernel */}
         <div className="flex flex-col gap-2">
           <p
             className="font-mono text-[11px] uppercase tracking-[0.14em]"
             style={{ color: "var(--ink-mute)" }}
           >
-            Pane 3 — Rust + GPU kernel
+            Pane 3: Rust + GPU kernel
           </p>
           <div
             className="border p-4 font-mono text-[12px] min-h-[80px]"

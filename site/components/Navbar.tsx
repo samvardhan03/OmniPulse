@@ -5,8 +5,8 @@ import Link from "next/link";
 const navLinks = [
   { label: "Platform", href: "#platform" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Docs", href: "#" },
-  { label: "Changelog", href: "#" },
+  { label: "Team", href: "#team" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -45,7 +45,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4">
           <a
-            href="https://github.com/samvardhan03/omnipulse-agent#readme"
+            href="https://github.com/samvardhan03/Omnipulse"
             className="font-mono text-[12px] uppercase tracking-[0.12em] px-4 py-2 border transition-opacity hover:opacity-70"
             style={{ borderColor: "var(--rule)", color: "var(--ink)" }}
           >

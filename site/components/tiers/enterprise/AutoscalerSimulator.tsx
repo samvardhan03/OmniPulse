@@ -45,7 +45,7 @@ function MiniChart({ throughput, slaSec }: { throughput: number; slaSec: number 
   return (
     <div className="border" style={{ borderColor: "var(--rule)", backgroundColor: "var(--bg-elev)" }}>
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] px-4 pt-3" style={{ color: "var(--ink-mute)" }}>
-        Prometheus — request rate · queue depth · tail latency
+        Prometheus: request rate · queue depth · tail latency
       </p>
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full" style={{ height: 80 }}>
         <path d={rpsPath} fill="none" stroke={PASTEL_BLUE} strokeWidth={1.5} />
@@ -98,7 +98,7 @@ export default function AutoscalerSimulator() {
       {/* GPU pod grid */}
       <div className="flex flex-col gap-3">
         <p className="font-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "var(--ink-mute)" }}>
-          GPU pod grid — {m.steadyPods} steady + {m.warmReserve} warm reserve
+          GPU pod grid - {m.steadyPods} steady + {m.warmReserve} warm reserve
         </p>
         <div className="flex flex-wrap gap-2">
           <AnimatePresence>
@@ -127,7 +127,7 @@ export default function AutoscalerSimulator() {
                     {isSteady ? "H100" : isWarm ? "warm" : "burst"}
                   </p>
                   <p className="font-mono text-[11px]" style={{ color: "var(--ink)" }}>
-                    {isSteady ? m.loadPct : isWarm ? "—" : "0"}%
+                    {isSteady ? m.loadPct : isWarm ? "n/a" : "0"}%
                   </p>
                 </motion.div>
               );

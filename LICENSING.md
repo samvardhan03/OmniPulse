@@ -12,6 +12,6 @@ If you cannot or do not wish to comply with the AGPL-3.0 — for example, to dep
 
 For commercial terms, contact shekhawatsamvardhan@gmail.com.
 
-This applies to OmniPulse and to its companion products built on the same engine, Vikshep and Drift.
+This applies to OmniPulse and to its companion product built on the same engine, Drift.
 
 This document describes the licensing model; it is not the commercial license agreement itself. Commercial terms are provided separately on request.

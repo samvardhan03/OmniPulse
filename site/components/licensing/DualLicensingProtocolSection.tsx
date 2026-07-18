@@ -2,17 +2,17 @@ import Eyebrow from "@/components/primitives/Eyebrow";
 import HairlineRule from "@/components/primitives/HairlineRule";
 
 const rows = [
-  { label: "Source code access", oss: "✓ full", commercial: "✓ full" },
-  { label: "Modify and redistribute", oss: "✓", commercial: "✓ (subject to contract)" },
-  { label: "Production deployment", oss: "⚠ research", commercial: "✓" },
-  { label: "Closed-source distribution", oss: "✗", commercial: "✓" },
-  { label: "SLA / support", oss: "✗", commercial: "✓ 24/7 enterprise" },
-  { label: "GPU autoscaling deployment", oss: "✗", commercial: "✓" },
+  { label: "Source code access", oss: "yes (full)", commercial: "yes (full)" },
+  { label: "Modify and redistribute", oss: "yes", commercial: "yes (subject to contract)" },
+  { label: "Production deployment", oss: "research only", commercial: "yes" },
+  { label: "Closed-source distribution", oss: "no", commercial: "yes" },
+  { label: "SLA / support", oss: "no", commercial: "yes, 24/7 enterprise" },
+  { label: "GPU autoscaling deployment", oss: "no", commercial: "yes" },
   { label: "License-token issuance volume", oss: "unlimited test", commercial: "contracted tier" },
   { label: "Ed25519 key custody", oss: "self-managed", commercial: "managed HSM optional" },
   { label: "IPFS pinning service", oss: "self-hosted", commercial: "managed" },
   { label: "Audit attestations", oss: "community", commercial: "SOC 2 + ISO 27001 (roadmap)" },
-  { label: "Indemnification", oss: "✗", commercial: "✓" },
+  { label: "Indemnification", oss: "no", commercial: "yes" },
 ];
 
 export default function DualLicensingProtocolSection() {
@@ -54,9 +54,9 @@ export default function DualLicensingProtocolSection() {
                     className="py-4 px-4 font-mono text-[13px]"
                     style={{
                       color:
-                        row.oss.startsWith("✓")
+                        row.oss.startsWith("yes")
                           ? "var(--ink)"
-                          : row.oss.startsWith("✗")
+                          : row.oss.startsWith("no")
                           ? "var(--ink-mute)"
                           : "var(--signal-warm)",
                     }}
