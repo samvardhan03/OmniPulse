@@ -26,7 +26,6 @@ omnipulse-rs/           Rust workspace
     vector-index/       concurrent HNSW
     sliced-wasserstein/ SW1 metric
     omni-lock-core/     OmniLock C-ABI v3, CUDA graph, build.rs gating
-omni-lock-embed/        Python: embedder, extractor, Sum-Product decoder, Mixer arch
 omnipulse-agent/        Python MCP control plane
 site/                   Next.js marketing site (omnipulseid.vercel.app)
 scripts/                FFI-separation and secrets CI checks
@@ -65,12 +64,13 @@ second shm_open returns the existing segment without an extra copy.
 
 Public (this repo):
 - All WST/JTFS kernels, Sliced-Wasserstein, HNSW, the cxx bridge
-- The extern "C" ABI v3 and the CUDA graph capture code in omni-lock-core
-- The Sum-Product decoder algorithm in omni-lock-embed (ldpc_decode_soft)
-- The embedder and extractor architecture (network definitions, no weights)
 - omnipulse-agent, omnipulse-mcp, the site, all specs
 
 Private (github.com/samvardhan03/omnipulse-engine):
+- The full omni-lock-embed package: embedder, extractor, decoder, Mixer
+  architecture, training pipeline, and all associated tests. These implement
+  the write-path residual watermark and the trained Mixer; publishing them
+  gives an adversary direct access to the embed procedure.
 - The production LDPC parity-check matrix H and the generator that emits it.
   Publishing H turns the verify rule into a forgery target; the digest constant
   `LDPC_H_SHA3_DIGEST` is compiled into the public tree as a tamper check
@@ -96,8 +96,7 @@ can audit the verification rule; the embedding quality is our moat.
 The passive path -- fingerprint a media file and insert it into the HNSW index
 -- builds and runs from this repo alone. The active embed/decode path requires
 engine artifacts from the private repo; it fails loudly with instructions if
-those artifacts are absent (see `omni-lock-core/build.rs` and
-`omni-lock-embed/omni_lock/ldpc.py`).
+those artifacts are absent (see `omni-lock-core/build.rs`).
 
 ### Requirements (passive path)
 

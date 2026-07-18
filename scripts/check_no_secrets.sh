@@ -77,16 +77,31 @@ else
     echo "OK"
 fi
 
-echo "--- check 5: create_ldpc_code must not exist in public ldpc.py"
-LDPC_PY="$ROOT/omni-lock-embed/omni_lock/ldpc.py"
-if [ -f "$LDPC_PY" ] && grep -q "def create_ldpc_code" "$LDPC_PY"; then
-    echo "FAIL: create_ldpc_code (H generator) found in public $LDPC_PY"
-    echo "      This function belongs in ldpc/generate_h.py in the private engine repo."
+echo "--- check 5: omni-lock-embed must not be tracked in the git index"
+EMBED_IN_INDEX=$(git -C "$ROOT" ls-files -- "omni-lock-embed/" 2>/dev/null) || true
+if [ -n "$EMBED_IN_INDEX" ]; then
+    echo "FAIL: omni-lock-embed/ files still tracked in git index:"
+    echo "$EMBED_IN_INDEX"
     FAIL=1
-elif [ -f "$LDPC_PY" ]; then
-    echo "OK"
 else
-    echo "SKIP: $LDPC_PY not found"
+    echo "OK"
+fi
+
+echo "--- check 6: no private omni-lock symbols outside the omnipulse-rs submodule"
+# omnipulse-rs is already a private repo; symbols there are expected.
+# Fail only if these identifiers appear in files tracked directly by the parent repo.
+SYMBOL_HITS=$(git -C "$ROOT" ls-files \
+    -- "*.py" "*.rs" "*.cpp" "*.cu" "*.h" 2>/dev/null \
+    | grep -v "^omnipulse-rs/" \
+    | xargs -I{} grep -l \
+        "omnilock_ffi\|kernel_ldpc\|kernel_dct\|omni_lock_kernel\|MixerTorch\|OmniLockWatermarker\|load_h_from_engine\|ResidualEmbedder" \
+        "$ROOT/{}" 2>/dev/null) || true
+if [ -n "$SYMBOL_HITS" ]; then
+    echo "FAIL: private OmniLock symbols found in parent-repo tracked source files:"
+    echo "$SYMBOL_HITS"
+    FAIL=1
+else
+    echo "OK"
 fi
 
 echo ""
